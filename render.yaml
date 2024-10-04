@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: nome-do-seu-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: ./start.sh

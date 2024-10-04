@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Senhas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #34495E;
+            color: #ECF0F1;
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        input, button {
+            font-size: 16px;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        input {
+            background-color: #BDC3C7;
+            color: #2C3E50;
+        }
+        button {
+            background-color: #3498DB;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980B9;
+            transform: scale(1.05);
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            word-wrap: break-word;
+        }
+        #senhaGerada {
+            margin-top: 20px;
+            padding: 10px;
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerador de Senhas Seguras</h1>
+    <form id="senhaForm">
+        <label for="comprimento">Comprimento da senha (mínimo 4 dígitos):</label>
+        <input type="number" id="comprimento" name="comprimento" min="4" required>
+        
+        <div>
+            <label><input type="checkbox" name="maiusculas" checked> Incluir letras maiúsculas</label>
+            <label><input type="checkbox" name="minusculas" checked> Incluir letras minúsculas</label>
+            <label><input type="checkbox" name="digitos" checked> Incluir dígitos</label>
+            <label><input type="checkbox" name="especiais" checked> Incluir caracteres especiais</label>
+        </div>
+
+        <button type="submit">Gerar Senha</button>
+    </form>
+    <p id="resultado"></p>
+
+    <input type="text" id="senhaGerada" placeholder="Senha gerada aparecerá aqui" readonly>
+    <button id="copiarBtn" style="display: none;">Copiar Senha</button>
+
+    <script>
+        document.getElementById('senhaForm').onsubmit = function(e) {
+            e.preventDefault();
+            let comprimento = document.getElementById('comprimento').value;
+
+            // Verifica se o comprimento é um número válido e maior que 4
+            if (comprimento < 4) {
+                document.getElementById('resultado').textContent = 'A senha deve ter no mínimo 4 dígitos.';
+                return;
+            }
+
+            const formData = new FormData(this);
+            fetch('/gerar_senha', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('resultado').textContent = data.error;
+                    document.getElementById('senhaGerada').value = ''; // Limpa o campo de senha gerada
+                    document.getElementById('copiarBtn').style.display = 'none'; // Esconde o botão de copiar
+                } else {
+                    document.getElementById('resultado').textContent = 'Senha Gerada:';
+                    document.getElementById('senhaGerada').value = data.senha; // Mostra a senha gerada
+                    document.getElementById('copiarBtn').style.display = 'inline'; // Mostra o botão de copiar
+                }
+            })
+            .catch(error => {
+                document.getElementById('resultado').textContent = 'Erro ao gerar a senha.';
+                console.error('Erro:', error);
+            });
+        }
+
+        // Copia a senha gerada para a área de transferência
+        document.getElementById('copiarBtn').onclick = function() {
+            const senhaGerada = document.getElementById('senhaGerada');
+            senhaGerada.select();
+            document.execCommand('copy'); // Copia o conteúdo do campo de entrada
+            alert('Senha copiada: ' + senhaGerada.value); // Feedback ao usuário
+        }
+    </script>
+</body>
+</html>
