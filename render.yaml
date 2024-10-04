@@ -1,6 +1,8 @@
+version: 1
 services:
   - type: web
-    name: nome-do-seu-app
+    name: gerador-senha
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: ./start.sh
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn main:app"
+    autoDeploy: true
