@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-import random
 import string
+import secrets
 
 app = Flask(__name__)
 
@@ -15,7 +15,8 @@ def gerar_senha(comprimento, incluir_maiusculas=True, incluir_minusculas=True, i
     if incluir_digitos:
         caracteres += string.digits
     if incluir_especiais:
-        caracteres += string.punctuation
+        # Defina uma lista personalizada de caracteres especiais para evitar problemas
+        caracteres += "!@#$%^&*()-_=+[]{}|;:,.<>?/~"
 
     if not caracteres:
         raise ValueError("Pelo menos um tipo de caractere deve ser selecionado.")
@@ -23,19 +24,19 @@ def gerar_senha(comprimento, incluir_maiusculas=True, incluir_minusculas=True, i
     # Garantir que a senha tenha pelo menos um caractere de cada tipo selecionado
     senha = []
     if incluir_maiusculas:
-        senha.append(random.choice(string.ascii_uppercase))
+        senha.append(secrets.choice(string.ascii_uppercase))
     if incluir_minusculas:
-        senha.append(random.choice(string.ascii_lowercase))
+        senha.append(secrets.choice(string.ascii_lowercase))
     if incluir_digitos:
-        senha.append(random.choice(string.digits))
+        senha.append(secrets.choice(string.digits))
     if incluir_especiais:
-        senha.append(random.choice(string.punctuation))
+        senha.append(secrets.choice("!@#$%^&*()-_=+[]{}|;:,.<>?/~"))
 
     # Preencher o restante da senha com caracteres aleatórios
     for _ in range(comprimento - len(senha)):
-        senha.append(random.choice(caracteres))
+        senha.append(secrets.choice(caracteres))
 
-    random.shuffle(senha)  # Embaralhar a senha gerada
+    secrets.SystemRandom().shuffle(senha)  # Embaralhar a senha gerada de forma segura
     return ''.join(senha)
 
 # Rota para a página inicial
@@ -57,6 +58,10 @@ def gerar():
         incluir_minusculas = 'minusculas' in request.form
         incluir_digitos = 'digitos' in request.form
         incluir_especiais = 'especiais' in request.form
+
+        # Verifica se pelo menos uma opção foi selecionada
+        if not (incluir_maiusculas or incluir_minusculas or incluir_digitos or incluir_especiais):
+            raise ValueError("Selecione pelo menos uma categoria de caracteres para a senha.")
 
         senha = gerar_senha(comprimento, incluir_maiusculas, incluir_minusculas, incluir_digitos, incluir_especiais)
         return jsonify({'senha': senha})
