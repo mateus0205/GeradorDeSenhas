@@ -6,7 +6,7 @@ Um gerador de senhas seguras desenvolvido em Python com Flask, que permite criar
 
 ## Demonstração
 
-![Demo](demo.png)  <!-- Substitua com o caminho correto para a sua imagem -->
+<a href="https://ibb.co/mB0Bqk8"><img src="https://i.ibb.co/vBhBPpY/image.png" alt="image" border="0"></a>
 
 
 ## Acessando a Aplicação
