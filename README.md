@@ -30,7 +30,7 @@ A aplicação pode ser acessada em [http://localhost:5000](http://localhost:5000
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/gerador-de-senhas.git
+   git clone https://github.com/mateus0205/gerador-de-senhas.git
    cd gerador-de-senhas
    
 2. Instale as Depedências
